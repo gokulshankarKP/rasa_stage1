@@ -1,0 +1,69 @@
+flows:
+  Recipe_Suggestion:
+    description: This flow suggests users the recipes based on the age and the fact that whether they are lactose intolerant or not.
+    steps:
+      - id: ask_age
+        collect: age
+        reset_after_flow_ends: false
+      - action: action_check_age
+        next:
+          - if: not slots.age_is_valid
+            then:
+              - action: utter_invalid_age
+              - set_slots:
+                  - age: null
+                next: ask_age
+          - else: 
+              - collect: weight
+                ask_before_filling: true
+              - collect: height
+                ask_before_filling: true
+              - collect: gender
+                ask_before_filling: true
+              - collect: food_category
+                ask_before_filling: true
+              - collect: lactose_intolerant
+                ask_before_filling: true
+              - collect: location
+                ask_before_filling: true
+              - action: action_get_recipe
+              - action: utter_recommended_recipe
+              - id: ask_any_question
+                collect: any_question
+                ask_before_filling: true
+              - action: action_check_goodbye
+                next:
+                  - if: not slots.user_said_goodbye
+                    then:
+                      - action: action_handle_fallback_question
+                      - action: utter_anyother_question_response
+                      - set_slots:
+                          - another_recipe: null
+                          - any_question: null
+                        next: ask_any_question
+                  - else: 
+                      - action: utter_goodbye
+                        next: END
+
+
+
+      
+          # - if: slots.user_said_goodbye
+          #   then:
+          #     - action: utter_goodbye
+          #       next: END
+          # - else:
+          #     - action: action_handle_fallback_question
+          #     - action: utter_anyother_question_response
+          #     - set_slots:
+          #         - another_recipe: null
+          #     - set_slots:
+          #         - any_question: null
+          #       next: fallback_start
+
+
+
+              
+
+
+
